@@ -25,7 +25,7 @@ app.MapGet("/", () => "Hello World 2!");
 app.MapGet("/people", (AppDbContext dbContext) => dbContext.People.ToListAsync());
 app.MapPost("/people", async (AppDbContext dbContext) =>
 {
-    var faker = new Bogus.Faker<Person>();
+    var faker = new PersonFaker();
     var person = faker.Generate();
     dbContext.People.Add(person);
     await dbContext.SaveChangesAsync();
@@ -33,3 +33,11 @@ app.MapPost("/people", async (AppDbContext dbContext) =>
 });
 
 app.Run();
+
+public class PersonFaker : Bogus.Faker<Person>
+{
+    public PersonFaker()
+    {
+        RuleFor(p => p.Name, f => f.Name.FullName());
+    }
+}
