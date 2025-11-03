@@ -15,7 +15,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World 2!");
 app.MapGet("/people", (AppDbContext dbContext) => dbContext.People.ToListAsync());
 app.MapPost("/people", async (AppDbContext dbContext) =>
 {
