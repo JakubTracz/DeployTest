@@ -1,0 +1,29 @@
+using DeployTest;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddOpenApi();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer("Server=tcp:deploy-test.database.windows.net,1433;Initial Catalog=deploye-test;Persist Security Info=False;User ID=jakubadmin;Password=Gitara01!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+app.MapGet("/", () => "Hello World!");
+app.MapGet("/people", (AppDbContext dbContext) => dbContext.People.ToListAsync());
+app.MapPost("/people", async (AppDbContext dbContext) =>
+{
+    var faker = new Bogus.Faker<Person>();
+    var person = faker.Generate();
+    dbContext.People.Add(person);
+    await dbContext.SaveChangesAsync();
+    return Results.Created($"/people/{person.Id}", person);
+});
+
+app.Run();
