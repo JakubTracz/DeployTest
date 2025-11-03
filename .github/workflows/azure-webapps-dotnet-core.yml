@@ -37,7 +37,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Create EF Migration Bundle
-        run:
+        run: |
           dotnet tool install --global dotnet-ef
           dotnet ef migrations bundle --project DeployTest/DeployTest.csproj --output efbundle
 
